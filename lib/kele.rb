@@ -1,4 +1,6 @@
 require 'httparty'
+require 'json'
+
 class Kele
 include HTTParty
 attr_accessor :username, :password, :api_url, :auth_token
@@ -14,7 +16,11 @@ attr_accessor :username, :password, :api_url, :auth_token
             "password": password
           }
         )
+  end
 
+  def get_me
+response = self.class.get("https://www.bloc.io/api/v1/users/me", headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
+JSON.parse(response.body)
   end
 
 end
