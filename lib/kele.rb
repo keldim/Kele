@@ -30,5 +30,32 @@ JSON.parse(response.body)
   		JSON.parse(response.body)
   	end
 
+    def get_messages(value = 0)
+    		if value > 0
+          response = self.class.get(@api_url + "message_threads", body: {"page": value}, headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
+            JSON.parse(response.body)
+        else
+          response = self.class.get(@api_url + "message_threads", headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
+            JSON.parse(response.body)
+    		end
+    	end
+
+
+      def create_message(sender, recipient_id, token, subject, stripped_text)
+
+      		response = self.class.post(@api_url + "messages", body: {
+      				        "sender": sender,
+                      "recipient_id": recipient_id,
+                      "token": token,
+                      "subject": subject,
+                      "stripped-text": stripped-text
+      			},
+      			headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
+            JSON.parse(response.body)
+
+        end
+
+
+
 
 end
