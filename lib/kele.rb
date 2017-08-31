@@ -30,13 +30,22 @@ class Kele
     JSON.parse(response.body)
   end
 
-  def get_messages(value = 0)
-    if value > 0
+  def get_messages(value = nil)
+    if value != nil
       response = self.class.get(@api_url + "message_threads", body: {"page": value}, headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
       JSON.parse(response.body)
     else
-      response = self.class.get(@api_url + "message_threads", headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
-      JSON.parse(response.body)
+      value = 1
+      while value != nil
+        response = self.class.get(@api_url + "message_threads", body: {"page": value}, headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
+        messages = JSON.parse(response.body)
+        if messages["items"].empty?
+          return "End of messages"
+        else
+          puts messages
+        end
+        value += 1
+      end
     end
   end
 
@@ -63,7 +72,7 @@ class Kele
       "checkpoint_id": checkpoint_id,
       "comment": comment,
       "enrollment_id": self.get_me["current_enrollment"]["id"]
-    }, 
+    },
     headers: { "authorization" => JSON.parse(@auth_token.body)["auth_token"] })
     JSON.parse(response.body)
 
